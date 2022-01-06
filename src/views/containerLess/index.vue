@@ -1,5 +1,22 @@
 <template>
-  <div><LineCharts></LineCharts></div>
+  <div>
+    <div class="container">
+      <el-date-picker
+        v-model="startTime"
+        type="datetime"
+        placeholder="选择日期时间"
+        align="left"
+        :picker-options="pickerOptions"
+      >
+      </el-date-picker>
+      <el-button @click="search" style="margin-left: 20px">查询</el-button>
+      <div class="panel">
+        <LineCharts ref="aa"></LineCharts>
+
+        <LineCharts ref="bb"></LineCharts>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 import LineCharts from "@/components/charts/LineChart.vue";
@@ -8,11 +25,50 @@ export default {
     LineCharts,
   },
   data() {
-    return {};
+    return {
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "今天",
+            onClick(picker) {
+              picker.$emit("pick", new Date());
+            },
+          },
+          {
+            text: "昨天",
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24);
+              picker.$emit("pick", date);
+            },
+          },
+          {
+            text: "一周前",
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", date);
+            },
+          },
+        ],
+      },
+      startTime: "",
+    };
   },
   mounted() {},
-  methods: {},
+  methods: {
+    search() {},
+  },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
+.container {
+  padding: 20px 20px;
+  .panel {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    column-gap: 20px; //设置列间距
+    // row-gap: 20px;
+  }
+}
 </style>

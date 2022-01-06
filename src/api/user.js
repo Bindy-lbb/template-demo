@@ -24,8 +24,17 @@ export function logout() {
   });
 }
 
-export function getPlace() {
-  return axios.get({
-    url: "http://api.map.baidu.com/place/v2/suggestion",
-  });
-}
+const APIs = {
+  getPlace(params) {
+    return Promise.resolve([
+      {
+        name: "111",
+        count: "2",
+      },
+    ]);
+  },
+};
+
+export default {
+  ...APIs,
+};
