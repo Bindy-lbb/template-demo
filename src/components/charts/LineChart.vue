@@ -41,13 +41,18 @@ export default {
   mounted() {
     // this.getData();
     this.initCharts();
+    this.testData();
   },
   methods: {
+    testData() {
+      var fruits = ["包名是应用唯      一标识"];
+      var energy = fruits.join("</br>");
+      console.log(energy), "--------------";
+    },
     categoriesDay() {},
 
     async initCharts() {
       const res = await api.getData();
-      console.log(res, "====res");
       const categoriesXDay = res.list.map(({ day }) => day);
       const { endTime = "", list = [], startTime = "", total = "" } = res;
       const allTotal = list.map(({ total }) => total);

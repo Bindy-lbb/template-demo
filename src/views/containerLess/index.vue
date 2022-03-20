@@ -7,22 +7,31 @@
         placeholder="选择日期时间"
         align="left"
         :picker-options="pickerOptions"
-      >
-      </el-date-picker>
-      <el-button @click="search" style="margin-left: 20px">查询</el-button>
+      ></el-date-picker
+      ><el-button @click="search" style="margin-left: 20px">查询</el-button>
       <div class="panel">
-        <LineCharts ref="aa"></LineCharts>
-
-        <LineCharts ref="bb"></LineCharts>
+        <LineCharts ref="aa"></LineCharts
+        ><!-- <PieChart ref="bb"></PieChart> -->
+      </div>
+      <div style="margin-top: 30px">
+        <vue-json-pretty
+          :path="'res'"
+          :data="{ key: 'value' }"
+        ></vue-json-pretty>
       </div>
     </div>
   </div>
 </template>
 <script>
 import LineCharts from "@/components/charts/LineChart.vue";
+import PieChart from "@/components/charts/pieChart.vue";
+import VueJsonPretty from "vue-json-pretty";
+import "vue-json-pretty/lib/styles.css";
 export default {
   components: {
     LineCharts,
+    VueJsonPretty,
+    // PieChart,
   },
   data() {
     return {
@@ -53,6 +62,7 @@ export default {
         ],
       },
       startTime: "",
+      dataList: [],
     };
   },
   mounted() {},

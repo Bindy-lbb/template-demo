@@ -31,6 +31,7 @@ export default {
       'sidebar'
     ]),
     routes() {
+      console.log(this.$router.options.routes,'===this.$router.options.routes');
       return this.$router.options.routes
     },
     activeMenu() {
@@ -54,3 +55,17 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+    // 使左边的菜单外层的元素高度充满屏幕
+  // #left-container{
+  //   position: absolute;
+  //   top: 100px;
+  //   bottom: 0px;
+  //   // 使菜单高度充满屏幕
+  //   #left-menu, .el-menu-vertical-demo{
+  //     height: 100%;
+  //   }
+  // }
+</style>
+

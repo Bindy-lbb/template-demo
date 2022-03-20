@@ -22,14 +22,11 @@ Vue.prototype.$echarts = echarts;
 //引用less
 import less from "less";
 Vue.use(less);
-/**
- * If you don't want to use mock-server
- * you want to use MockJs for mock api
- * you can execute: mockXHR()
- *
- * Currently MockJs will be used in the production environment,
- * please remove it before going online ! ! !
- */
+
+//引入Handsontable
+// import Handsontable from "handsontable/base";
+// Vue.use(Handsontable);
+
 if (process.env.NODE_ENV === "production") {
   const { mockXHR } = require("../mock");
   mockXHR();
