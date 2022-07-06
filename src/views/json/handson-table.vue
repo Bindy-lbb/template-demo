@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { HotTable } from "@handsontable/vue";
+import { HotTable } from "handsontable/vue";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.css"; // 样式
 import { Container } from "element-ui";

@@ -1,53 +1,53 @@
 <template>
-  <div class="json">
-    <el-button type="primary" @click="open">点击打开弹框</el-button>
-    <el-dialog
-      v-if="mVisible"
-      title="弹框"
-      :visible.sync="mVisible"
-      :close-on-click-modal="false"
-      :destroy-on-close="true"
-      @close="closeDialog"
-    >
-      <div class="dialog-content"><SelectCard></SelectCard></div>
-      <div class="dialog-footer" slot="footer">
-        <el-button type="primary" @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="closeDialog">确认</el-button>
-      </div>
-    </el-dialog>
+  <div id="app">
+    <div class="report-page">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="用户管理" name="first">
+          <MapInfo></MapInfo>
+        </el-tab-pane>
+        <el-tab-pane label="信息管理" name="two"></el-tab-pane>
+      </el-tabs>
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script>
-// import CodeMirrorPatch from "./codeMirrorPatch.vue";
-import SelectCard from "./selectCard.vue";
+import MapInfo from "./map-info.vue";
 export default {
+  name: "App",
   components: {
-    // CodeMirrorPatch,
-    SelectCard,
+    MapInfo,
   },
-  props: {},
   data() {
     return {
-      mVisible: false,
+      activeName: "",
+    };
+  },
+
+  // 父组件中返回要传给下级的数据
+  provide() {
+    return {
+      reload: this.reload,
     };
   },
   methods: {
-    open() {
-      this.mVisible = true;
+    handleClick(tab, event) {
+      console.log(tab, event);
     },
-    //关闭弹窗
-    closeDialog() {
-      this.mVisible = false;
+    reload() {
+      this.isRouterAlive = false;
+      this.$nextTick(() => {
+        this.isRouterAlive = true;
+      });
     },
   },
 };
 </script>
 
-<style lang="less" scoped>
-.json {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
+<style scoped>
+.report-page {
+  padding: 30px;
 }
 </style>
+

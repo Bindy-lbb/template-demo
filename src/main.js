@@ -14,14 +14,19 @@ import router from "./router";
 
 import "@/icons"; // icon
 import "@/permission"; // permission control
+import echarts from "echarts";
+import BaiduMap from "vue-baidu-map";
 
 // 引入echarts
-import echarts from "echarts";
 Vue.prototype.$echarts = echarts;
 
 //引用less
 import less from "less";
 Vue.use(less);
+
+Vue.use(BaiduMap, {
+  ak: "Gm6QCiE6yQYIT4rMARLTsjGV51fxu1Zi",
+});
 
 //引入Handsontable
 // import Handsontable from "handsontable/base";

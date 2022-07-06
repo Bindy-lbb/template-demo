@@ -10,7 +10,7 @@
       ></el-date-picker
       ><el-button @click="search" style="margin-left: 20px">查询</el-button>
       <div class="panel">
-        <LineCharts ref="aa"></LineCharts
+        <LineCharts ref="aa"></LineCharts>
         ><!-- <PieChart ref="bb"></PieChart> -->
       </div>
       <div style="margin-top: 30px">
@@ -19,6 +19,7 @@
           :data="{ key: 'value' }"
         ></vue-json-pretty>
       </div>
+      <div class="text-list" style="margin-top: 30px">333</div>
     </div>
   </div>
 </template>
@@ -27,6 +28,8 @@ import LineCharts from "@/components/charts/LineChart.vue";
 import PieChart from "@/components/charts/pieChart.vue";
 import VueJsonPretty from "vue-json-pretty";
 import "vue-json-pretty/lib/styles.css";
+import { logData } from "@/api/table";
+
 export default {
   components: {
     LineCharts,
@@ -63,11 +66,35 @@ export default {
       },
       startTime: "",
       dataList: [],
+      // newArr: [],
     };
   },
-  mounted() {},
+  mounted() {
+    // this.getData();
+  },
   methods: {
     search() {},
+    getData() {
+      logData().then((res) => {
+        this.dataList = res[0].data;
+        console.log(this.dataList, "===");
+        this.dataList.map((changelog) => {
+          changelog.history?.map((his) => {
+            console.log(his, "===his");
+            const newArr = [
+              ...his.diff.del?.map((item) => {
+                ({ ...item, type: "del" });
+              }),
+              ...his.diff.ins?.map((item) => {
+                ({ ...item, type: "ins" });
+              }),
+            ];
+            console.log(newArr, "====bewArr");
+            return { ...his, newArr };
+          });
+        });
+      });
+    },
   },
 };
 </script>

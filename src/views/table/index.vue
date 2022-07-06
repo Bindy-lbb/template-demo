@@ -1,95 +1,89 @@
 <template>
-  <div class="app-container">
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      @sort-change="changeTableSort"
-      element-loading-text="Loading"
-      border
-      fit
-      highlight-current-row
-    >
-      <el-table-column align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.$index }}
+  <div>
+    <!-- <el-dialog :visible.sync="visable" width="1000px"> -->
+    <el-table row-key="date" border :data="tableData" style="width: 100%">
+      <el-table-column prop="date" label="日期" width="180">
+        <template slot-scope="{ row }">
+          {{ row.date }}
         </template>
       </el-table-column>
-      <el-table-column label="标题">
-        <template slot-scope="scope">
-          {{ scope.row.title }}
+      <el-table-column prop="name" label="姓名" width="180">
+        <template slot-scope="{ row }">
+          <el-select v-model="row.name">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.id"
+              :value="item.name"
+            ></el-option>
+          </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="作者" width="110" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="浏览量" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.pageviews }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        class-name="status-col"
-        label="Status"
-        width="110"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{
-            scope.row.status
-          }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        align="center"
-        prop="created_at"
-        label="Display_time"
-        width="200"
-      >
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column prop="address" label="地址"> </el-table-column>
     </el-table>
+    <pre>{{ tableData }}</pre>
+
+    <el-button @click="add">aaa</el-button>
+    <!-- </el-dialog> -->
   </div>
 </template>
 
 <script>
-import { getList } from "@/api/table";
-
+import Sortable from "sortablejs";
 export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: "success",
-        draft: "gray",
-        deleted: "danger",
-      };
-      return statusMap[status];
-    },
-  },
   data() {
     return {
-      list: null,
-      listLoading: true,
+      visable: true,
+      tableData: [
+        {
+          date: "2016-05-02",
+          name: "王小22222虎",
+          address: "上海市普陀区金沙江路 1518 弄",
+        },
+        {
+          date: "2016-05-04",
+          name: "王小3333虎",
+          address: "上海市普陀区金沙江路 1517 弄",
+        },
+        {
+          date: "2016-05-01",
+          name: "王小444虎",
+          address: "上海市普陀区金沙江路 1519 弄",
+        },
+        {
+          date: "2016-05-03",
+          name: "王小55虎",
+          address: "上海市普陀区金沙江路 1516 弄",
+        },
+      ],
+
+      options: [
+        { id: 1, name: "1111" },
+        {
+          id: 2,
+          name: "2222",
+        },
+      ],
     };
   },
-  created() {
-    this.fetchData();
+  mounted() {
+    const table = document.querySelector(".el-table__body-wrapper tbody");
+    const self = this;
+    Sortable.create(table, {
+      onEnd({ newIndex, oldIndex }) {
+        const targetRow = self.tableData.splice(oldIndex, 1)[0];
+        self.tableData.splice(newIndex, 0, targetRow);
+      },
+    });
   },
 
   methods: {
-    //排序
-    changeTableSort(column) {},
-    fetchData() {
-      this.listLoading = true;
-      getList().then((response) => {
-        this.list = response.data.items;
-        this.listLoading = false;
-      });
+    add() {
+      console.log(this.tableData, "====tableData");
     },
   },
 };
 </script>
+
+
+

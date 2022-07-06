@@ -7,22 +7,6 @@ Vue.use(Router);
 import Layout from "@/layout";
 import Nav from "@/nav";
 
-// export const constantRoutes = [
-//   {
-//     path: "/",
-//     component: Nav,
-//     redirect: "/dashboard",
-//     children: [
-//       {
-//         path: "/",
-//         name: "Home",
-//         component: () => import("@/pages/home/home.vue"),
-//         meta: { title: "Home", icon: "dashboard" },
-//       },
-//     ],
-//   },
-// ];
-
 export const constantRoutes = [
   {
     path: "/login",
