@@ -1,89 +1,254 @@
 <template>
   <div>
-    <!-- <el-dialog :visible.sync="visable" width="1000px"> -->
-    <el-table row-key="date" border :data="tableData" style="width: 100%">
-      <el-table-column prop="date" label="日期" width="180">
-        <template slot-scope="{ row }">
-          {{ row.date }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="name" label="姓名" width="180">
-        <template slot-scope="{ row }">
-          <el-select v-model="row.name">
-            <el-option
-              v-for="item in options"
-              :key="item.id"
-              :label="item.id"
-              :value="item.name"
-            ></el-option>
-          </el-select>
-        </template>
-      </el-table-column>
-      <el-table-column prop="address" label="地址"> </el-table-column>
-    </el-table>
-    <pre>{{ tableData }}</pre>
-
-    <el-button @click="add">aaa</el-button>
-    <!-- </el-dialog> -->
+    <div id="container" />
   </div>
 </template>
 
 <script>
 import Sortable from "sortablejs";
+import { uniqBy } from "lodash-es";
+import G6 from "@antv/g6";
+
 export default {
   data() {
     return {
-      visable: true,
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小22222虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小3333虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小444虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小55虎",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
-      ],
-
-      options: [
-        { id: 1, name: "1111" },
-        {
-          id: 2,
-          name: "2222",
-        },
-      ],
+      data: {
+        nodes: [
+          {
+            id: "0",
+            label: "0",
+          },
+          {
+            id: "1",
+            label: "1",
+          },
+          {
+            id: "2",
+            label: "2",
+          },
+          {
+            id: "3",
+            label: "3",
+          },
+          {
+            id: "4",
+            label: "4",
+            comboId: "A",
+          },
+          {
+            id: "5",
+            label: "5",
+            comboId: "B",
+          },
+          {
+            id: "6",
+            label: "6",
+            comboId: "A",
+          },
+          {
+            id: "7",
+            label: "7",
+            comboId: "C",
+          },
+          {
+            id: "8",
+            label: "8",
+            comboId: "C",
+          },
+          {
+            id: "9",
+            label: "9",
+            comboId: "A",
+          },
+          {
+            id: "10",
+            label: "10",
+            comboId: "B",
+          },
+          {
+            id: "11",
+            label: "11",
+            comboId: "B",
+          },
+        ],
+        edges: [
+          {
+            source: "0",
+            target: "1",
+          },
+          {
+            source: "0",
+            target: "2",
+          },
+          {
+            source: "1",
+            target: "4",
+          },
+          {
+            source: "0",
+            target: "3",
+          },
+          {
+            source: "3",
+            target: "4",
+          },
+          {
+            source: "2",
+            target: "5",
+          },
+          {
+            source: "1",
+            target: "6",
+          },
+          {
+            source: "1",
+            target: "7",
+          },
+          {
+            source: "3",
+            target: "8",
+          },
+          {
+            source: "3",
+            target: "9",
+          },
+          {
+            source: "5",
+            target: "10",
+          },
+          {
+            source: "5",
+            target: "11",
+          },
+        ],
+        combos: [
+          {
+            id: "A",
+            label: "combo A",
+            style: {
+              fill: "#C4E3B2",
+              stroke: "#C4E3B2",
+            },
+          },
+          {
+            id: "B",
+            label: "combo B",
+            style: {
+              stroke: "#99C0ED",
+              fill: "#99C0ED",
+            },
+          },
+          {
+            id: "C",
+            label: "combo C",
+            style: {
+              stroke: "#eee",
+              fill: "#eee",
+            },
+          },
+        ],
+      },
     };
   },
   mounted() {
-    const table = document.querySelector(".el-table__body-wrapper tbody");
-    const self = this;
-    Sortable.create(table, {
-      onEnd({ newIndex, oldIndex }) {
-        const targetRow = self.tableData.splice(oldIndex, 1)[0];
-        self.tableData.splice(newIndex, 0, targetRow);
-      },
-    });
+    this.init();
   },
-
   methods: {
-    add() {
-      console.log(this.tableData, "====tableData");
+    init() {
+      this.data.nodes.forEach((node) => {
+        switch (node.ComboId) {
+          case "A":
+            node.style = {
+              fill: "#C4E3B2",
+              stroke: "#aaa",
+            };
+            break;
+          case "B":
+            node.style = {
+              fill: "#99C0ED",
+              stroke: "#aaa",
+            };
+            break;
+          case "C":
+            node.style = {
+              fill: "#eee",
+              stroke: "#aaa",
+            };
+            break;
+          default:
+            node.style = {
+              fill: "#FDE1CE",
+              stroke: "#aaa",
+            };
+            break;
+        }
+      });
+      const width = container.scrollWidth;
+      const height = (container.scrollHeight || 800) - 30;
+      const graph = new G6.Graph({
+        container: "container",
+        width,
+        height: height - 50,
+        fitView: true,
+        fitViewPadding: 30,
+        animate: true,
+        groupByTypes: false,
+        modes: {
+          default: [
+            "drag-combo",
+            "drag-node",
+            "drag-canvas",
+            {
+              type: "collapse-expand-combo",
+              relayout: false,
+            },
+          ],
+        },
+        layout: {
+          type: "dagre",
+          sortByCombo: false,
+          ranksep: 10, //层间距
+          nodesep: 10, //节点间距
+        },
+        defaultNode: {
+          size: [60, 30],
+          type: "rect",
+          anchorPoints: [
+            [0.5, 0],
+            [0.5, 1],
+          ],
+        },
+        defaultEdge: {
+          type: "line",
+        },
+        defaultCombo: {
+          type: "rect",
+          style: {
+            fillOpacity: 0.1,
+          },
+        },
+      });
+      graph.data(this.data);
+      graph.render();
+      console.log("comboTrees", graph.get("comboTrees"));
+
+      if (typeof window !== "undefined")
+        window.onresize = () => {
+          if (!graph || graph.get("destroyed")) return;
+          if (!container || !container.scrollWidth || !container.scrollHeight)
+            return;
+          graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
+        };
     },
   },
 };
 </script>
 
+<style lang="less" scoped>
+.container {
+  width: 500px;
+  height: 800px;
+}
+</style>
 
 
