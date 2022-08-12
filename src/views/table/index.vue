@@ -1,5 +1,27 @@
 <template>
   <div>
+    <el-form ref="form" :model="ruleForm" :rules="rules" label-width="80px">
+      <el-form-item label="ip" prop="ip">
+        <el-select
+          v-model="ruleForm.ip"
+          multiple
+          filterable
+          allow-create
+          default-first-option
+          placeholder="请选择文章标签"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
+
+    <el-button @click="save">保存</el-button>
     <div id="container" />
   </div>
 </template>
@@ -8,10 +30,56 @@
 import Sortable from "sortablejs";
 import { uniqBy } from "lodash-es";
 import G6 from "@antv/g6";
+import { v4 as uuidv4 } from "uuid";
+// import { log } from "handsontable/helpers";
 
 export default {
   data() {
+    let ipTest = (rule, value, callback) => {
+      console.log(value, "===value");
+      if (value === "" || typeof value === "undefined" || value == null) {
+        callback(new Error("请输入正确的IP地址"));
+      } else {
+        const reg =
+          /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        if (!reg.test(value) && value !== "") {
+          callback(new Error("请输入正确的IP地址"));
+        } else {
+          callback();
+        }
+      }
+    };
     return {
+      options: [
+        {
+          value: "HTML",
+          label: "HTML",
+        },
+        {
+          value: "CSS",
+          label: "CSS",
+        },
+        {
+          value: "JavaScript",
+          label: "JavaScript",
+        },
+      ],
+      value: [],
+      ruleForm: {
+        ip: [], //注意这里是个数组
+      },
+
+      rules: {
+        ip: [
+          {
+            required: true,
+            trigger: "change",
+            validator: ipTest,
+          },
+        ],
+      },
+
+      graph: undefined, //new G6
       data: {
         nodes: [
           {
@@ -148,12 +216,74 @@ export default {
           },
         ],
       },
+      aArr: [
+        { id: 1, count: 10 },
+        { id: 2, count: 50 },
+        { id: 4, count: 6 },
+        { id: 3, count: 3 },
+      ],
+      bArr: [
+        { id: 1, count: 11 },
+        { id: 7, count: 50 },
+        { id: 5, count: 6 },
+        { id: 3, count: 3 },
+      ],
     };
   },
   mounted() {
     this.init();
+    this.getData();
   },
   methods: {
+    getData() {
+      // let arr1 = this.aArr
+      //   .sort(function (a, b) {
+      //     return b.count - a.count;
+      //   })
+      //   .slice(0, 2);
+      // console.log(arr1, "===arr1");
+      const newArr = [...this.aArr, ...this.bArr];
+      console.log(newArr, "===newArr");
+    },
+
+    function factorial(n) {
+    if (n==1) {
+      return 1
+    }
+    return n*factorial(n-1)
+
+    }
+    // ipTest(rule, value, callback) {
+    //   console.log(value, "===value");
+    //   if (value === "" || typeof value === "undefined" || value == null) {
+    //     callback(new Error("请输入正确的IP地址"));
+    //   } else {
+    //     const reg =
+    //       /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+    //     if (!reg.test(value) && value !== "") {
+    //       callback(new Error("请输入正确的IP地址"));
+    //     } else {
+    //       callback();
+    //     }
+    //   }
+    //   // let regexp =
+    //   //   /^((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}$/;
+
+    //   // let isCorrect = true;
+    //   // if (value) {
+    //   //   if (regexp.test(value) == false) {
+    //   //     isCorrect = false;
+    //   //   }
+    //   // }
+    //   // if (value == "") {
+    //   //   return callback(new Error("请输入iP地址"));
+    //   // } else if (!isCorrect) {
+    //   //   callback(new Error("请输入正确对ip地址"));
+    //   // } else {
+    //   //   callback();
+    //   // }
+    // },
+    save() {},
     init() {
       this.data.nodes.forEach((node) => {
         switch (node.ComboId) {
@@ -185,7 +315,7 @@ export default {
       });
       const width = container.scrollWidth;
       const height = (container.scrollHeight || 800) - 30;
-      const graph = new G6.Graph({
+      this.graph = new G6.Graph({
         container: "container",
         width,
         height: height - 50,
@@ -228,16 +358,18 @@ export default {
           },
         },
       });
-      graph.data(this.data);
-      graph.render();
-      console.log("comboTrees", graph.get("comboTrees"));
+      this.graph.data(this.data);
+      this.graph.render();
 
       if (typeof window !== "undefined")
         window.onresize = () => {
-          if (!graph || graph.get("destroyed")) return;
+          if (!this.graph || this.graph.get("destroyed")) return;
           if (!container || !container.scrollWidth || !container.scrollHeight)
             return;
-          graph.changeSize(container.scrollWidth, container.scrollHeight - 30);
+          this.graph.changeSize(
+            container.scrollWidth,
+            container.scrollHeight - 30
+          );
         };
     },
   },
